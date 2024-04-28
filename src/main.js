@@ -1,4 +1,4 @@
-import { Parser } from "./ast";
+import { Parser } from "../ast";
 import { Lexer } from "./lexer";
 import { ProcedureScopeTraverse } from "./mcdc-gen";
 
