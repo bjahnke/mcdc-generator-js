@@ -1,10 +1,11 @@
-import { Parser } from "../ast";
-import { Lexer } from "./lexer";
-import { ProcedureScopeTraverse } from "./mcdc-gen";
+import { Parser } from "./ast.js";
+import { Lexer } from "./lexer.js";
+import { ProcedureScopeTraverse } from "./mcdc-gen.js";
+import lodash from "lodash";
 
 inputValid = true;
 const input = document.querySelector("input");
-let lexer = new Lexer(input.value);
+let lexer = null
 let errorMsg = null;
 
 function Generator(condition) {
@@ -25,24 +26,25 @@ function Generator(condition) {
   );
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  input.addEventListener("keypress", () => {
-    try {
-      lexer = new Lexer(input.value);
-      input.style.backgroundColor = "white";
-      errorMsg = null;
-    } catch (error) {
-      input.style.backgroundColor = "lightred";
-      errorMsg = error;
-    }
-  });
+input.addEventListener("input", (event) => {
+  console.log(event.target)
+  event.stopPropagation();
+  try {
+    lexer = new Lexer(input.value);
+    input.style.backgroundColor = "white";
+    errorMsg = null;
+  } catch (error) {
+    input.style.backgroundColor = "#FFCCCB";
+    errorMsg = error;
+  }
 });
+
 
 const button = document.querySelector("button");
 button.addEventListener("click", () => {
   const errorOut = document.querySelector("#error-out");
   if (errorMsg !== null) {
-    errorOut.textContent = lexerError.message;
+    errorOut.textContent = errorMsg.message;
     return
   }
   errorOut.textContent = "";
@@ -67,12 +69,6 @@ function createTable (data) {
 
   // Get all headers from data[0]
   const headers = Object.keys(data[0])
-
-  headers.forEach(header => {
-    const headerCell = document.createElement('th')
-    headerCell.textContent = header
-    headerRow.appendChild(headerCell)
-  })
 
   tableHeader.appendChild(headerRow)
   table.appendChild(tableHeader)

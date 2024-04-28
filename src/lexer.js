@@ -1,5 +1,9 @@
-const op = require('operator');
-const re = require('re');
+
+op = {
+  and_: (a, b) => a && b,
+  or_: (a, b) => a || b,
+  not_: a => !a
+}
 
 /**
  * Verifies tokens of conditional expression strings for DataGenerator
@@ -44,7 +48,7 @@ class Token extends String {
   }
 }
 
-class Lexer {
+export class Lexer {
   /**
    * Performs simple lexical analysis on the input string.
    * Produces a token list and a list of unique variable symbols
@@ -106,7 +110,7 @@ class Lexer {
      * Checks test string for illegal tokens
      * raises exception if illegal tokens found
      */
-    const match_list = test_string.match(/[^A-Z()&|! ]/g);
+    const match_list = test_string.match(/[^A-Z()&|! ]/);
     if (match_list && match_list.length > 0) {
       const str_match = match_list.join(", ");
       throw new Error(`Illegal Characters in string: ${str_match}`);
@@ -159,7 +163,7 @@ function build_symbol_list(raw_token_list) {
     const raw_token = raw_token_list[i];
     const new_token = new Token(raw_token);
 
-    if (new_token.type === null) {
+    if (new_token.type === undefined) {
       // find all bad tokens before raising exception
       bad_tokens.push([raw_token, i]);
     } else if (new_token.type === t.SYMBOL && !symbols.includes(new_token)) {
