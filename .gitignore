@@ -2,7 +2,12 @@
 node_modules/
 
 # Ignore build artifacts
-dist/
+dist/*.map
+dist/*.txt
+dist/*.html
+dist/service-worker*
+dist/workbox-*
+dist/main.js
 build/
 
 # Ignore environment-specific files
