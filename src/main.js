@@ -1,74 +1,74 @@
-import { Parser } from "./ast.js";
-import { Lexer } from "./lexer.js";
-import { ProcedureScopeTraverse } from "./mcdc-gen.js";
-import lodash from "lodash";
+import { Parser } from './ast.js'
+import { Lexer } from './lexer.js'
+import { ProcedureScopeTraverse } from './mcdc-gen.js'
+import lodash from 'lodash'
 
-inputValid = true;
-const input = document.querySelector("input");
-let lexer = null
-let errorMsg = null;
+const lightred = '#FFCCCB'
+const input = document.querySelector('input')
+const output = document.querySelector('#output-container')
+let lex = null
+let errorMsg = null
 
-function Generator(condition) {
+function Generator (condition_string) {
+  let tree = null
   try {
-    const tree = generate_ast(condition);
+    lex = new Lexer(condition_string)
+    tree = new Parser(lex.tokens, lex.symbols)
   } catch (error) {
-    input.style.backgroundColor = "lightred";
-    errorMsg = error;
+    input.style.backgroundColor = lightred
+    errorMsg = error
     return
   }
 
-  return ProcedureScopeTraverse(
+  return new ProcedureScopeTraverse(
     tree.ast_root,
     tree.leaf_nodes,
     tree.symbol_list,
     tree.all_nodes,
     new Array(tree.symbol_list.length).fill(null)
-  );
+  )
 }
 
-input.addEventListener("input", (event) => {
+input.addEventListener('input', (event) => {
   console.log(event.target)
-  event.stopPropagation();
+  event.stopPropagation()
   try {
-    lexer = new Lexer(input.value);
-    input.style.backgroundColor = "white";
-    errorMsg = null;
+    lex = new Lexer(input.value)
+    input.style.backgroundColor = 'white'
+    errorMsg = null
   } catch (error) {
-    input.style.backgroundColor = "#FFCCCB";
-    errorMsg = error;
+    input.style.backgroundColor = lightred
+    errorMsg = error
   }
-});
+})
 
-
-const button = document.querySelector("button");
-button.addEventListener("click", () => {
-  const errorOut = document.querySelector("#error-out");
+const button = document.querySelector('button')
+button.addEventListener('click', () => {
+  const errorOut = document.querySelector('#error-out')
   if (errorMsg !== null) {
-    errorOut.textContent = errorMsg.message;
+    errorOut.textContent = errorMsg.message
     return
   }
-  errorOut.textContent = "";
-  const gen = Generator(input.value);
+  errorOut.textContent = ''
+  const gen = Generator(input.value)
 
-  if (gen === null) {
-    errorOut.textContent = "Invalid input";
+  if (gen === undefined) {
+    errorOut.textContent = 'Invalid input'
     return
   }
-  
+  const table = createTable(gen.symbol_list, [...gen.false_cases, ...gen.true_cases])
+  output.innerHTML = ''
+  output.appendChild(table)
+})
 
-  const table = createTable(gen);
-
-
-});
-
-function createTable (data) {
+function createTable (headers, data) {
   const table = document.createElement('table')
   const tableBody = document.createElement('tbody')
   const tableHeader = document.createElement('thead')
   const headerRow = document.createElement('tr')
 
   // Get all headers from data[0]
-  const headers = Object.keys(data[0])
+  // const headers = Object.keys(data[0])
 
   tableHeader.appendChild(headerRow)
   table.appendChild(tableHeader)

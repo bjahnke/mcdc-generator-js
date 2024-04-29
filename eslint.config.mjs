@@ -12,5 +12,5 @@ const compat = new FlatCompat({ baseDirectory: __dirname, recommendedConfig: plu
 
 export default [
   { languageOptions: { globals: { ...globals.browser, ...globals.node, ...globals.jest } } },
-  ...compat.extends('standard'),
+  ...compat.extends('standard')
 ]
