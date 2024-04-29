@@ -1,7 +1,7 @@
 import { Parser } from './ast.js'
 import { Lexer } from './lexer.js'
 import { ProcedureScopeTraverse } from './mcdc-gen.js'
-import lodash from 'lodash'
+import './styles.css'
 
 const lightred = '#FFCCCB'
 const input = document.querySelector('input')
@@ -42,8 +42,9 @@ input.addEventListener('input', (event) => {
   }
 })
 
-const button = document.querySelector('button')
-button.addEventListener('click', () => {
+function generateOnClick (event) {
+  event.stopPropagation()
+  event.preventDefault()
   const errorOut = document.querySelector('#error-out')
   if (errorMsg !== null) {
     errorOut.textContent = errorMsg.message
@@ -56,10 +57,27 @@ button.addEventListener('click', () => {
     errorOut.textContent = 'Invalid input'
     return
   }
-  const table = createTable(gen.symbol_list, [...gen.false_cases, ...gen.true_cases])
+  const symbolNames = gen.symbol_list.map((symbol) => symbol.value)
+  let testCases = [...gen.false_cases, ...gen.true_cases]
+  testCases = testCases.map((testCase) => {
+    const boolAssigns = testCase[0]
+    const criticalNodeValues = testCase[1]
+    const expectedResult = testCase[2]
+    const testCaseRecord = {}
+    boolAssigns.forEach((bool, index) => {
+      testCaseRecord[symbolNames[index]] = bool
+    })
+    testCaseRecord.critical_nodes = criticalNodeValues.map((nodeVal) => symbolNames[nodeVal])
+    testCaseRecord.expected_result = expectedResult
+    return testCaseRecord
+  })
+  const table = createTable(Object.keys(testCases[0]), testCases)
   output.innerHTML = ''
   output.appendChild(table)
-})
+}
+
+const button = document.querySelector('button')
+button.addEventListener('click', generateOnClick)
 
 function createTable (headers, data) {
   const table = document.createElement('table')
@@ -70,6 +88,12 @@ function createTable (headers, data) {
   // Get all headers from data[0]
   // const headers = Object.keys(data[0])
 
+  headers.forEach(header => {
+    const headerCell = document.createElement('th')
+    headerCell.textContent = header
+    headerRow.appendChild(headerCell)
+  })
+
   tableHeader.appendChild(headerRow)
   table.appendChild(tableHeader)
 
@@ -79,6 +103,14 @@ function createTable (headers, data) {
     headers.forEach(header => {
       const cell = document.createElement('td')
       cell.textContent = respObj[header]
+      if (cell.textContent === 'true') {
+        cell.style.backgroundColor = 'lightgreen'
+      } else if (cell.textContent === 'false') {
+        cell.style.backgroundColor = lightred
+      }
+      if (respObj.critical_nodes.includes(header)) {
+        cell.style.fontWeight = 'bold';
+      }
       row.appendChild(cell)
     })
 

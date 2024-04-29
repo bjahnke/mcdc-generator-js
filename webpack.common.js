@@ -19,13 +19,13 @@ const dotenv = configDotEnv({
 const config = {
   // multiple entries
   entry: {
-    bundle: './src/main.js',
-    main: {
-      import: './src/main.js',
-      library: {
-        type: 'global'
-      }
-    }
+    bundle: './src/main.js'
+    // main: {
+    //   import: './src/main.js',
+    //   library: {
+    //     type: 'global'
+    //   }
+    // }
   },
   // dynamic output
   output: {
