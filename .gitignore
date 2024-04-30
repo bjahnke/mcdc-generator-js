@@ -7,7 +7,6 @@ dist/*.txt
 dist/*.html
 dist/service-worker*
 dist/workbox-*
-dist/main.js
 build/
 
 # Ignore environment-specific files
