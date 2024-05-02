@@ -42,14 +42,6 @@ class Stack {
       : try_stack_operation(a_list.length - 1)
   }
 
-  pop_from (idx) {
-    try {
-      return this.stack.splice(idx, 1)[0]
-    } catch (error) {
-      return null
-    }
-  }
-
   is_empty () {
     return this.stack.length === 0
   }
@@ -210,7 +202,7 @@ export class Parser {
      */
     while (this._operators.stack.length > 0) {
       const current_op = this._operators.pop_top_of_stack()
-      if (current_op === '(') {
+      if (current_op.value === '(') {
         throw new Error("Missing ')' in expression")
       }
       this.add_op_node(current_op)
@@ -222,12 +214,11 @@ export class Parser {
      * creates a new node out of the operator at the top of the operator stack
      * and the top 2 child nodes in the nodes stack
      */
-    try {
-      const r_child = this._nodes.pop_top_of_stack()
-      const l_child = this._nodes.pop_top_of_stack()
+    const r_child = this._nodes.pop_top_of_stack()
+    const l_child = this._nodes.pop_top_of_stack()
+    if (r_child !== undefined && l_child !== undefined) {
       this.add_node(new Node(current_op.value, l_child, r_child))
-    } catch (error) {
-      // not sure if this can be reached
+    } else {
       throw new Error('missing an operand/expression')
     }
   }
@@ -240,7 +231,7 @@ export class Parser {
      */
     while (
       this._operators.stack.length > 0 &&
-      this._operators.get_top_of_stack() === '!'
+      this._operators.get_top_of_stack().value === op.not_
     ) {
       this._operators.pop_top_of_stack()
       node = new Node(op.not_, node)
@@ -251,11 +242,10 @@ export class Parser {
 
   op_priority (opr) {
     const op_priority_dict = { [op.or_]: 1, [op.and_]: 2 }
-    try {
-      return op_priority_dict[opr]
-    } catch (error) {
-      // TODO this is error is programmer logic related should be covered by unit tests instead
+    const op_priority = op_priority_dict[opr]
+    if (op_priority === undefined) {
       throw new Error('not token not popped when symbol node created')
     }
+    return op_priority
   }
 }

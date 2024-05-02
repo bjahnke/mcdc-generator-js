@@ -37,3 +37,7 @@ table td.true {
 table td.false {
     background-color: lightred;
 }
+
+input {
+    width: 500px;
+}
