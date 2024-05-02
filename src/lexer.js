@@ -7,7 +7,6 @@ import { TokenType, op } from './token-type.js'
 
 const symbolRegex = /[a-zA-Z]+/
 
-
 function get_type (token) {
   const t = TokenType
   const type_dict = {

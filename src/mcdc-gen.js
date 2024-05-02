@@ -326,16 +326,18 @@ class TestCaseScope {
         )
         if (current_node_scope.is_decision(child_node_scope.expected_result)) {
           this.add_critical_node(child_node_scope)
-          if (has_children && child_node_scope.is_critical()) {
-            this.set_critical_paths(child_node_scope)
-            const child_is_empty = child_node_scope.mandatory_tests_empty()
-            all_children_empty = all_children_empty && child_is_empty
+          if (has_children) {
+            if (child_node_scope.is_critical()) {
+              this.set_critical_paths(child_node_scope)
+              const child_is_empty = child_node_scope.mandatory_tests_empty()
+              all_children_empty = all_children_empty && child_is_empty
+            }
+          } else {
+            this.critical_symbol_idxs.push(child.val)
+            child_node_scope.remove_mandatory_test([
+              child_node_scope.expected_result
+            ])
           }
-        } else {
-          this.critical_symbol_idxs.push(child.val)
-          child_node_scope.remove_mandatory_test([
-            child_node_scope.expected_result
-          ])
         }
         if (!has_children) {
           this.set_leaf_assign(child_node_scope)
