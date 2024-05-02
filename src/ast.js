@@ -14,6 +14,7 @@ class Stack {
   constructor (a_list = [], stack_pointer_zero = false) {
     this.stack = [...a_list]
     this.STACK = [...this.stack]
+    this.stack_pointer_zero = stack_pointer_zero
   }
 
   pop_top_of_stack () {
@@ -155,7 +156,7 @@ export class Parser {
       if (current_op === undefined) {
         break
       }
-      if (current_op === '(') {
+      if (current_op.value === '(') {
         break
       }
       if (
@@ -190,7 +191,7 @@ export class Parser {
         throw new Error('Improper use of (!) operator in expression')
       }
       // stop process when we find a left paren
-      if (current_op === '(') {
+      if (current_op.value === '(') {
         break
       }
 
