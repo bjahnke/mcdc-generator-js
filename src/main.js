@@ -5,6 +5,7 @@ import './styles.css'
 
 const lightred = '#FFCCCB'
 const input = document.querySelector('input')
+input.value = '(((a | b) & (!c | d) & (e | f) & (!g | h)) & ((i | j) & k & (!l | m)) & ((n | !o) & (p | !q) & (r & !s) & t))'
 const output = document.querySelector('#output-container')
 let lex = null
 let errorMsg = null
